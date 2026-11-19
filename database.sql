@@ -1,0 +1,10 @@
+CREATE DATABASE IF NOT EXISTS service_center CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE service_center;
+CREATE TABLE services (id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(100) NOT NULL,description VARCHAR(255) NOT NULL,price_from DECIMAL(10,2) NOT NULL DEFAULT 0,is_active TINYINT(1) NOT NULL DEFAULT 1);
+CREATE TABLE repair_requests (id INT AUTO_INCREMENT PRIMARY KEY,request_number VARCHAR(30) NOT NULL UNIQUE,client_name VARCHAR(80) NOT NULL,phone VARCHAR(25) NOT NULL,email VARCHAR(120),device_type VARCHAR(40) NOT NULL,problem TEXT NOT NULL,status ENUM('new','diagnostics','in_progress','ready','completed','cancelled') NOT NULL DEFAULT 'new',admin_comment TEXT,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,INDEX idx_status(status),INDEX idx_created(created_at));
+CREATE TABLE visits (id INT AUTO_INCREMENT PRIMARY KEY,visitor_token VARCHAR(64) NOT NULL,visit_date DATE NOT NULL,page_views INT NOT NULL DEFAULT 1,first_visit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,last_visit TIMESTAMP DEFAULT CURRENT_TIMESTAMP,UNIQUE KEY uniq_visit(visitor_token,visit_date));
+CREATE TABLE admins (id INT AUTO_INCREMENT PRIMARY KEY,login VARCHAR(50) NOT NULL UNIQUE,password_hash VARCHAR(255) NOT NULL,name VARCHAR(100) NOT NULL);
+INSERT INTO services(name,description,price_from) VALUES ('Ремонт ноутбуков','Диагностика, чистка, замена комплектующих и восстановление системы',1200),('Ремонт компьютеров','Поиск неисправности, сборка и настройка системного блока',1000),('Ремонт смартфонов','Замена экрана, аккумулятора и разъёмов',1500);
+-- Пароль демонстрационного администратора: admin123
+INSERT INTO admins(login,password_hash,name) VALUES ('admin','$2b$12$utEEAY0TsHEgSdN/Zw2ky.6JZbF7kG//09qOnUQUeH7oji9zQEYX6','Администратор');
+INSERT INTO repair_requests(request_number,client_name,phone,email,device_type,problem,status) VALUES ('FP-260925-1001','Иван Петров','+7 999 111-22-33','ivan@example.ru','Ноутбук','Ноутбук перегревается и выключается','diagnostics'),('FP-260924-1002','Анна Соколова','+7 999 222-33-44','anna@example.ru','Смартфон','Не работает разъём зарядки','ready');
